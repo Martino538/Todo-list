@@ -1,10 +1,10 @@
-export default function TodoCard({ todo, todoIndex, handleDeleteTodo }) {
+export default function TodoCard({ todo, todoIndex, handleDeleteTodo, handleCompleteTodo }) {
   console.log(handleDeleteTodo);
   return (
     <div className="card todo-item">
       <p>{todo.input}</p>
       <div className="todo-buttons">
-        <button disabled={todo.complete}>
+        <button onClick={() => handleCompleteTodo(todoIndex)} disabled={todo.complete}>
           <h6>Done</h6>
         </button>
         <button onClick={() => handleDeleteTodo(todoIndex)}>

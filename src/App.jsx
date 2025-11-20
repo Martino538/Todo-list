@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Tabs from "./components/Tabs";
 import TodoInput from "./components/TodoInput";
@@ -21,10 +21,15 @@ function App() {
   function handleAddTodo(newTodo) {
     const newTodoItem = [...todos, { input: newTodo, complete: false }];
     setTodos(newTodoItem);
+    handleSaveData(newTodoList);
   }
 
   function handleCompleteTodo(idTodoItem) {
-    let newTodoList = []
+    const newTodoList = [...todos];
+    const completedTodo = {...newTodoList[idTodoItem], complete: true};
+    newTodoList[idTodoItem] = completedTodo;
+    setTodos(newTodoList);
+    handleSaveData(newTodoList);
   }
 
   function handleDeleteTodo(index) {
@@ -34,13 +39,24 @@ function App() {
       )
     })
     setTodos(newTodoList);
+    handleSaveData(newTodoList);
   }
+
+  function handleSaveData(currentTodos) {
+    localStorage.setItem('todo-app', JSON.stringify({ todos: currentTodos }));
+  }
+
+  useEffect(() => {
+    if(!localStorage || !localStorage.getItem('todo-app')) {return}
+    const db = JSON.parse(localStorage.getItem('todo-app'));
+    setTodos(db.todos);
+  }, [])
 
   return (
     <>
       <Header todos={todos} />
       <Tabs todos={todos} selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-      <TodoList todos={todos} selectedTab={selectedTab} handleDeleteTodo={handleDeleteTodo}/>
+      <TodoList todos={todos} selectedTab={selectedTab} handleCompleteTodo={handleCompleteTodo} handleDeleteTodo={handleDeleteTodo}/>
       <TodoInput todos={todos} handleAddTodo={handleAddTodo} />
     </>
   );
